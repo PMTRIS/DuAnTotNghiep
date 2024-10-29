@@ -8,27 +8,21 @@ import org.springframework.data.domain.Pageable;
 import com.mt.entity.Product;
 
 public interface ProductService {
-
     List<Product> findAll(); // Phương thức này không phân trang
-    
-    List<Product> findByCategoryId(String cid);
-    
-    public Page<Product> findByPriceRange(double minPrice, double maxPrice, Pageable pageable);
-    
-    Product findById(String id); // Chỉnh sửa kiểu tham số thành String
+
+    List<Product> findByCategoryId(Integer cid); // Thay đổi kiểu dữ liệu thành Integer
+
+    Page<Product> findByPriceRange(double minPrice, double maxPrice, Pageable pageable);
+
+    Product findById(Integer id); // Thay đổi kiểu dữ liệu thành Integer
 
     Page<Product> findAll(Pageable pageable); // Phương thức phân trang
-  
-    Page<Product> findByCategoryId(String cid, Pageable pageable); // Phương thức phân trang theo danh mục
+
+    Page<Product> findByCategoryId(Integer cid, Pageable pageable); // Phương thức phân trang theo danh mục
 
     Product create(Product product);
 
     Product update(Product product);
 
-    void delete(String id); // Chỉnh sửa kiểu tham số thành String
-
-
-
-	
-   
+    void delete(Integer id); // Thay đổi kiểu dữ liệu thành Integer
 }

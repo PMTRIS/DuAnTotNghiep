@@ -223,7 +223,7 @@ th:replace="~{/layout/index :: dynamic(~{::main})}">
                         <!-- Product 1 -->
                         <div class="col-md-4" th:each="p : ${items}">
                             <div class="product-card position-relative">
-                               <a th:href="@{|/p/detail/${p.id}|}"> <img th:src="@{/Images/{images}(images=${p.images})}" alt="Vintas Public 2000s - Low Top"></a>
+                               <a th:href="@{|/product/detail/${p.id}|}"> <img th:src="@{/Images/{images}(images=${p.images})}" alt="Vintas Public 2000s - Low Top"></a>
                                 <div class="product-title" th:utext=${p.name}></div>
                                 <div class="product-price">Price: <span th:text="${p.price}"></span> vnd</div>
                                 <button class="btn-buy">MUA NGAY</button>

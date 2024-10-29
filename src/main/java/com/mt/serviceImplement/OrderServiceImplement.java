@@ -11,40 +11,61 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mt.entity.Order;
 import com.mt.entity.OrderDetail;
-import com.mt.repository.OrderDetailDAO;
+import com.mt.repository.OrderDetailRepository;
 import com.mt.repository.OrderRepository;
 import com.mt.service.OrderService;
 
 @Service
 public class OrderServiceImplement implements OrderService {
     @Autowired
-    OrderRepository orderDAO;
+    OrderRepository orderRepository;
     @Autowired
-    OrderDetailDAO orderDetailDAO;
+    OrderDetailRepository orderDetailRepository;
 
     @Override
     public Order create(JsonNode orderData) {
         ObjectMapper mapper = new ObjectMapper();
+        Order order = mapper.convertValue(orderData, Order.class);
+        orderRepository.save(order);
         
-        Order hoaDon = mapper.convertValue(orderData, Order.class);
-        orderDAO.save(hoaDon);
-        
-        TypeReference<List<OrderDetail>> type = new TypeReference<List<OrderDetail>>() {
-        };
-        
+        TypeReference<List<OrderDetail>> type = new TypeReference<List<OrderDetail>>() {};
         List<OrderDetail> details = mapper.convertValue(orderData.get("orderDetails"), type)
-                .stream().peek(d -> d.setOrder(hoaDon)).collect(Collectors.toList());
-        orderDetailDAO.saveAll(details);
-        return hoaDon;
+                .stream().peek(d -> d.setOrder(order)).collect(Collectors.toList());
+        orderDetailRepository.saveAll(details);
+        return order;
     }
 
     @Override
-    public Order findById(String id) {  // Changed from Integer to Long
-        return orderDAO.findById(id).orElse(null); // Changed from get() to orElse(null) for safety
+    public void createOrder(Order order, List<OrderDetail> orderDetails) {
+        if (order == null || orderDetails == null || orderDetails.isEmpty()) {
+            throw new IllegalArgumentException("Order and order details must not be null or empty");
+        }
+
+        // Debugging logs
+        System.out.println("Saving Order: " + order);
+        System.out.println("Saving Order Details: " + orderDetails);
+
+        orderRepository.save(order); // Lưu đơn hàng
+
+        // Cập nhật quan hệ giữa Order và OrderDetail
+        for (OrderDetail detail : orderDetails) {
+            detail.setOrder(order); // Gán Order cho OrderDetail
+            orderDetailRepository.save(detail); // Lưu OrderDetail
+        }
     }
 
     @Override
-    public List<Order> findByUsername(String id) {
-        return orderDAO.findByUsername(id);
+    public List<Order> findByUsername(String username) {
+        return orderRepository.findByUsername(username);
     }
+
+	@Override
+	public List<Order> findAll() {
+		return orderRepository.findAll();
+	}
+
+	@Override
+	public Order save(Order order) {
+		return orderRepository.save(order);
+	}
 }
