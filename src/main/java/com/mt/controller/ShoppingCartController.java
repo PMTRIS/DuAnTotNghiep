@@ -42,14 +42,14 @@ public class ShoppingCartController {
             @RequestParam("phone") String phone,
             @RequestParam("email") String email,
             @RequestParam("address") String address,
-            @RequestParam("city") String city,
-            @RequestParam("district") String district,
-            @RequestParam("ward") String ward,
+            @RequestParam("cityName") String cityName,
+            @RequestParam("districtName") String districtName,
+            @RequestParam("wardName") String wardName,
             @RequestParam("paymentMethod") Integer paymentId,
             Model model) {
 
         Order order = new Order();
-        String fullAddress = String.format("%s, %s, %s, %s", address, ward, district, city);
+        String fullAddress = String.format("%s - %s - %s - %s", cityName, districtName, wardName ,address);
         System.out.println("Full Address: " + fullAddress);
         order.setHoten(name);
         order.setSdt(phone);
