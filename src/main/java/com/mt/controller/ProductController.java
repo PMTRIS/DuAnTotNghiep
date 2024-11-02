@@ -1,7 +1,9 @@
 package com.mt.controller;
 
+import java.text.DecimalFormat;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -112,12 +114,31 @@ public class ProductController {
     }
 
     @RequestMapping("/product/detail/{id}")
-    public String detail(Model model, @PathVariable("id") Integer id) {
+    public String detail(Model model, @PathVariable("id") Integer id,
+            @RequestParam(value = "page", defaultValue = "0") int page) {
+        
         Product item = productService.findById(id);
         List<Size> sizes = sizeService.findAll();
+        DecimalFormat decimalFormat = new DecimalFormat("#,###.000");
+        String formattedPrice = decimalFormat.format(item.getPrice()) + " VNĐ";
+
+        Pageable pageable = PageRequest.of(page, 4);
+        Page<Product> relatedProductsPage = productService.findByDescribe(item.getDescribe(), pageable);
+        
+        List<String> formattedRelatedPrices = relatedProductsPage.getContent()
+                .stream()
+                .map(p -> decimalFormat.format(p.getPrice()) + " VNĐ")
+                .collect(Collectors.toList());
+        
         model.addAttribute("item", item);
         model.addAttribute("sizes", sizes);
+        model.addAttribute("formattedPrice", formattedPrice);
+        model.addAttribute("relatedProducts", relatedProductsPage.getContent());
+        model.addAttribute("relatedProductsPage", relatedProductsPage);
+        model.addAttribute("relatedProductsPrices", formattedRelatedPrices);
         model.addAttribute("pageTitle", item.getName());
+        model.addAttribute("currentPage", page);
         return "product/detail";
     }
+
 }

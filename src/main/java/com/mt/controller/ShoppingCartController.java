@@ -1,5 +1,7 @@
 package com.mt.controller;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -68,5 +70,10 @@ public class ShoppingCartController {
         orderService.save(order); 
         model.addAttribute("order", order);
         return "cart/success"; 
+    }
+    @RequestMapping("/cart/qrcode")
+    public String qrcode(Model model) {
+        model.addAttribute("pageTitle", "Thanh Toán Mã QR");
+        return "cart/qrcode";
     }
 }

@@ -16,8 +16,9 @@ public interface ProductRepository extends JpaRepository<Product, Integer> {
 	@Query("SELECT p FROM Product p WHERE p.category.id = ?1")
 	List<Product> findByCategoryId(Integer cid);
 
-	 
 	Page<Product> findByCategoryId(Integer cid, Pageable pageable);
 
 	Page<Product> findByPriceBetween(double minPrice, double maxPrice, Pageable pageable);
+	
+	Page<Product> findByDescribe(String describe, Pageable pageable);
 }

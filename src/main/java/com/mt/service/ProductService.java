@@ -24,5 +24,7 @@ public interface ProductService {
 
     Product update(Product product);
 
-    void delete(Integer id); // Thay đổi kiểu dữ liệu thành Integer
+    void delete(Integer id); 
+    
+    Page<Product> findByDescribe(String describe, Pageable pageable);
 }

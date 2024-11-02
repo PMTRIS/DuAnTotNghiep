@@ -73,4 +73,10 @@ public class ProductServiceImplement implements ProductService {
     public Page<Product> findByPriceRange(double minPrice, double maxPrice, Pageable pageable) {
         return productRepository.findByPriceBetween(minPrice, maxPrice, pageable);
     }
+
+	@Override
+	public Page<Product> findByDescribe(String describe, Pageable pageable) {
+	    return productRepository.findByDescribe(describe, pageable);
+	}
+
 }
