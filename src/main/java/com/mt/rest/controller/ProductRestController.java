@@ -1,6 +1,8 @@
 package com.mt.rest.controller;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -14,10 +16,12 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.mt.entity.Product;
 import com.mt.service.ProductService;
+import com.mt.service.SizeProductService;
 
 @CrossOrigin("*")
 @RestController
@@ -27,48 +31,63 @@ public class ProductRestController {
     @Autowired
     ProductService productService;
 
-    // Lấy sản phẩm theo ID
+    @Autowired
+    private SizeProductService sizeProductService;
+    
     @GetMapping("{id}")
     public ResponseEntity<Product> getOne(@PathVariable("id") Integer id) {
         Product product = productService.findById(id);
         if (product != null) {
-            System.out.println("Product found: " + product); // In ra sản phẩm tìm thấy
             return ResponseEntity.ok(product);
         } else {
-            System.out.println("Product not found for id: " + id); // Nếu không tìm thấy, in ra lỗi
             return ResponseEntity.notFound().build();
         }
     }
 
-    // Lấy tất cả sản phẩm
+    @GetMapping("/check-quantity")
+    public ResponseEntity<Map<String, Integer>> checkQuantity(
+            @RequestParam int productId,
+            @RequestParam String sizeId,
+            @RequestParam int quantity) {
+
+        int availableQuantity = sizeProductService.getAvailableQuantity(productId, sizeId);
+        Map<String, Integer> response = new HashMap<>();
+
+        if (quantity > availableQuantity) {
+            response.put("availableQuantity", availableQuantity);
+            response.put("status", 0);  // 0 nghĩa là không đủ hàng
+        } else {
+            response.put("availableQuantity", availableQuantity);
+            response.put("status", 1);  // 1 nghĩa là đủ hàng
+        }
+
+        return ResponseEntity.ok(response);
+    }
+
+    
     @GetMapping
     public List<Product> getAll() {
-        return productService.findAll(); // Gọi phương thức không phân trang
+        return productService.findAll(); 
     }
 
-    // Lấy tất cả sản phẩm có phân trang
     @GetMapping("/paged")
     public Page<Product> getAllPaged(Pageable pageable) {
-        return productService.findAll(pageable); // Gọi phương thức phân trang
+        return productService.findAll(pageable);
     }
 
-    // Tạo sản phẩm mới
     @PostMapping
     public Product create(@RequestBody Product product) {
         return productService.create(product);
     }
 
-    // Cập nhật sản phẩm
     @PutMapping("/{id}")
-    public Product update(@PathVariable("id") Integer id, @RequestBody Product product) { // Thay đổi kiểu id thành Integer
-        // Cần thiết lập mã sản phẩm cho đối tượng sản phẩm mới
-        product.setId(id); // Đảm bảo mã sản phẩm trong đối tượng
+    public Product update(@PathVariable("id") Integer id, @RequestBody Product product) {
+        product.setId(id); 
         return productService.update(product);
     }
 
-    // Xóa sản phẩm
     @DeleteMapping("/{id}")
-    public void delete(@PathVariable("id") Integer id) { // Thay đổi kiểu id thành Integer
+    public void delete(@PathVariable("id") Integer id) {
         productService.delete(id);
     }
 }

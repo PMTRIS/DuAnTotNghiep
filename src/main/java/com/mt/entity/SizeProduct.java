@@ -6,28 +6,26 @@ import java.io.Serializable;
 
 @Data
 @Entity
-@IdClass(SizeProductKey.class)  // Sử dụng composite key
 @Table(name = "SizeProduct")
+@IdClass(SizeProductKey.class)
 public class SizeProduct implements Serializable {
-	private static final long serialVersionUID = 1L;
-    @Id
-    @Column(name = "Productid")
-    private String Productid; // Khai báo thuộc tính cơ bản
+    private static final long serialVersionUID = 1L;
 
     @Id
-    @Column(name = "Sizeid")
-    private String Sizeid; // Khai báo thuộc tính cơ bản
+    @Column(name = "productid")
+    private Integer productid;
 
-    private int count;
+    @Id
+    @Column(name = "sizeid")
+    private String sizeid;
 
-    // Quan hệ với Product và Size
+    private Integer count;
+
     @ManyToOne
-    @JoinColumn(name = "Productid", insertable = false, updatable = false)
+    @JoinColumn(name = "productid", insertable = false, updatable = false)
     private Product product;
 
     @ManyToOne
-    @JoinColumn(name = "Sizeid", insertable = false, updatable = false)
+    @JoinColumn(name = "sizeid", insertable = false, updatable = false)
     private Size size;
-
-    // Getters và Setters
 }

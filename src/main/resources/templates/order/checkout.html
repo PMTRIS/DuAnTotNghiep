@@ -5,7 +5,7 @@
     <br>
     <div class="container mt-4"></div>
     <hr>
-    <form th:action="@{/cart/success}" method="post" onsubmit="return validateForm();" >
+    <form th:action="@{/order/success}" method="post" onsubmit="return validateForm();" >
         <div class="row">
             <div class="col-md-8">
                 <div class="p-2" style="background-color: #e9ecef;">
@@ -19,19 +19,19 @@
                     <select class="m-3 col-md-10 p-2" id="city" required name="city">
                         <option value="">Tỉnh/Thành Phố</option>
                     </select>
-                    <div class="col-md-10 mt-3" id="district" required>
-                        <select class="col-md-5	 p-2 " id="districtSelect" name="district" required>
+                    <div class="col-md-10 mt-3 m-3 " id="district" required>
+                        <select class="col-md-5 p-2 " id="districtSelect" name="district" required>
 					        <option value="0">Chọn Quận/Huyện</option>
 					    </select>
-					    <select class="col-md-5 p-2 " id="ward" name="ward" required style="position: absolute; max-width: 300px; right: 44%">
+					    <select class="col-md-5  float-end p-2" id="ward" name="ward" required>
 					        <option value="0">Chọn Phường/Xã</option>
 					    </select>
-                        <div class="form-check mt-4">
+                    </div>
+                    <div class="form-check mt-4 m-3">
                             <input class="form-check-input" type="checkbox" id="flexCheckDefault" name="subscribe">
                             <label class="form-check-label" for="flexCheckDefault">
                                 Cập nhật các thông tin mới nhất về chương trình từ Sports
                             </label>
-                        </div>
                     </div>
                     <input type="hidden" id="cityNameHidden" name="cityName">
                     <input type="hidden" id="districtNameHidden" name="districtName">
@@ -43,7 +43,6 @@
                         <div class="form-check mt-4">
                             <input type="radio" class="form-check-input" checked>
                             <label class="form-check-label">Tốc độ tiêu chuẩn (từ 2 - 5 ngày làm việc) </label>
-                            <span class="float-end" id="shippingFee">0 VNĐ</span>
                         </div>
                     </div>
                     <div class="row m-1">
@@ -65,13 +64,8 @@
 					        </div>
 					    </div>
 					</div>
-
-
-
-
                 </div>
             </div>
-
             <!-- Cart Summary -->
             <div class="col-md-4" style="background-color: #e9ecef;">
                 <div class="cart-summary p-2">
@@ -95,10 +89,12 @@
                         <hr style="border-top: 1px dashed #ccc;">
                     </div>
                     <div>
-                        <p>Đơn hàng: <span class="float-end">{{cart.amount | number:3}} VNĐ</span></p>
+                        <p class="fw-bold">Đơn hàng: <span id="cartAmount" class="float-end fw-bold">{{cart.amount | number:3}} VNĐ</span></p>
                         <p><strong>Số lượng: <span class="float-end">{{cart.count}}</span></strong></p>
-                        <p><strong>Phí vận chuyển: <span class="float-end"></span></strong></p>
-                        <p><strong>TỔNG CỘNG: <span class="float-end fw-bold" style="color: orange;">{{cart.amount | number:3}} VNĐ</span></strong></p>
+                        <p><strong>Phí vận chuyển: <span id="shippingFee" class="float-end" >0 VNĐ</span></strong></p>
+                        <hr style="border-top: 1px dashed #ccc;">                      						
+						<p><strong>TỔNG CỘNG:</strong> <span class="float-end fw-bold"  id="totalAmount" style="color: orange;">{{ cart.amount | number:3 }} VNĐ</span></p>						
+						<input type="hidden" name="totalAmount" value="{{cart.amount}}">
                     </div>
                     <button  class="btn btn-warning w-100 mt-3 fw-bold text-light p-4 fs-4" type="submit" style="background: #f60;">HOÀN TẤT ĐẶT HÀNG</button>
                 </div>
@@ -107,20 +103,19 @@
     </form>
     <br>
     <script>
-        document.getElementById("city").addEventListener("change", function() {
-            const cityName = this.options[this.selectedIndex].text;
-            document.getElementById("cityNameHidden").value = cityName;
-        });
+        function handlePaymentMethodChange(radio) {
+            // Thay 'QR_PAYMENT_ID' bằng ID thực tế của phương thức thanh toán bằng QR trong cơ sở dữ liệu của bạn
+            const qrPaymentId = '2';
+            const paymentForm = document.getElementById('paymentForm');
 
-        document.getElementById("districtSelect").addEventListener("change", function() {
-            const districtName = this.options[this.selectedIndex].text;
-            document.getElementById("districtNameHidden").value = districtName;
-        });
-
-        document.getElementById("ward").addEventListener("change", function() {
-            const wardName = this.options[this.selectedIndex].text;
-            document.getElementById("wardNameHidden").value = wardName;
-        });
+            if (radio.value === qrPaymentId) {
+                // Chuyển hướng đến trang mã QR nếu chọn thanh toán bằng QR
+                paymentForm.action = "/order/qrcode";
+            } else {
+                // Quay về trang xác nhận đơn hàng thông thường nếu không chọn QR
+                paymentForm.action = "/order/success";
+            }
+        }
     </script>
     <script src="/js/validation.js"></script>
 </main>

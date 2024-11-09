@@ -27,7 +27,7 @@ app.controller("shopping-cart-ctrl", function($scope, $http) {
 				$http.get(`/rest/products/${id}`).then(resp => {
 					resp.data.qty = selectedQuantity;
 					//resp.data.qty = 1;
-					resp.data.size = selectedSize; // Gán size vào đối tượng sản phẩm
+					resp.data.size = selectedSize; 
 					cart.items.push(resp.data);
 					cart.saveToLocalStorage();
 				});
@@ -95,15 +95,13 @@ app.controller("shopping-cart-ctrl", function($scope, $http) {
 				};
 			});
 		},
-
-		// Handle purchase action
-		// Handle purchase action
+		
 		purchase() {
 			let order = angular.copy(this);
 			$http.post("/rest/orders", order).then(resp => {
 				alert("Đặt hàng thành công");
 				$scope.cart.clear();
-				location.href = "/order/detail/" + resp.data.id; // Chuyển đến trang xác nhận đơn hàng
+				location.href = "/order/detail/" + resp.data.id; 
 			}).catch(error => {
 				alert("Đặt hàng lỗi!");
 				console.error("Order failed:", error);

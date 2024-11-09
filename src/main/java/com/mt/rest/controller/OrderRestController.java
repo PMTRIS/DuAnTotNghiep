@@ -17,7 +17,7 @@ import com.mt.service.OrderService;
 
 @CrossOrigin("*")
 @RestController
-@RequestMapping("/rest/orders")
+@RequestMapping("/rest/order")
 public class OrderRestController {
 	@Autowired
 	OrderService orderService;
